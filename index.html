@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RGB master</title>
+    <title>Jeu de devinette RGB</title>
     <style>
       body {
         display: flex;
@@ -13,12 +14,15 @@
         font-family: "Poppins", sans-serif;
         transition: background 0.5s;
         text-align: center;
+        overflow: hidden;
       }
       .container {
         background: rgba(255, 255, 255, 0.9);
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 10;
       }
       h1 {
         font-size: 24px;
@@ -58,6 +62,24 @@
         font-weight: bold;
         margin-top: 15px;
         color: #333;
+      }
+      .firework {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        background-color: white;
+        border-radius: 50%;
+        animation: explode 1s ease-out forwards;
+      }
+      @keyframes explode {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(5);
+          opacity: 0;
+        }
       }
     </style>
     <link
@@ -107,7 +129,29 @@
 
         document.getElementById(
           "result"
-        ).textContent = `Score de précision : ${score.toFixed(2)}%`;
+        ).textContent = `Score de précision : ${score.toFixed(
+          2
+        )}% \nLa réponse était : RGB(${targetColor.r}, ${targetColor.g}, ${
+          targetColor.b
+        })`;
+
+        if (score > 80) {
+          launchFireworks();
+        }
+      }
+
+      function launchFireworks() {
+        for (let i = 0; i < 20; i++) {
+          setTimeout(() => {
+            const firework = document.createElement("div");
+            firework.classList.add("firework");
+            document.body.appendChild(firework);
+            firework.style.left = `${Math.random() * 100}vw`;
+            firework.style.top = `${Math.random() * 100}vh`;
+            firework.style.backgroundColor = `rgb(${randomRGB()}, ${randomRGB()}, ${randomRGB()})`;
+            setTimeout(() => firework.remove(), 1000);
+          }, i * 100);
+        }
       }
 
       newGame();
