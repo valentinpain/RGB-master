@@ -3,25 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>RGB master</title>
+    <title>RGB Master</title>
     <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        font-family: "Poppins", sans-serif;
-        transition: background 0.5s;
-        text-align: center;
-        overflow: hidden;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      .container {
+      body,
+      html {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Poppins", sans-serif;
+      }
+      .split-container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .half {
+        flex: 1;
+        transition: background 0.5s;
+      }
+      .left {
+        background: rgb(255, 255, 255);
+      }
+      .right {
+        background: rgb(0, 0, 0);
+      }
+      .modal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         background: rgba(255, 255, 255, 0.9);
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        position: relative;
+        text-align: center;
         z-index: 10;
       }
       h1 {
@@ -44,7 +67,7 @@
         outline: none;
       }
       button {
-        background: #007bff;
+        background: #40a6d6;
         color: white;
         border: none;
         padding: 12px 20px;
@@ -55,7 +78,7 @@
         transition: background 0.3s;
       }
       button:hover {
-        background: #0056b3;
+        background: #368db5;
       }
       #result {
         font-size: 20px;
@@ -63,39 +86,22 @@
         margin-top: 15px;
         color: #333;
       }
-      .firework {
-        position: absolute;
-        width: 5px;
-        height: 5px;
-        background-color: white;
-        border-radius: 50%;
-        animation: explode 1s ease-out forwards;
-      }
-      @keyframes explode {
-        0% {
-          transform: scale(1);
-          opacity: 1;
-        }
-        100% {
-          transform: scale(5);
-          opacity: 0;
-        }
-      }
     </style>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
-      rel="stylesheet"
-    />
   </head>
   <body>
-    <div class="container">
+    <div class="split-container">
+      <div class="half left" id="guessColor"></div>
+      <div class="half right" id="targetColor"></div>
+    </div>
+
+    <div class="modal">
       <h1>Devine la couleur RGB</h1>
       <div class="inputs">
         <input type="number" id="r" min="0" max="255" placeholder="R" />
         <input type="number" id="g" min="0" max="255" placeholder="G" />
         <input type="number" id="b" min="0" max="255" placeholder="B" />
       </div>
-      <button onclick="checkGuess()">Valider</button>
+      <button onclick="checkGuess()" id="submit_button">Valider</button>
       <button onclick="newGame()">Nouvelle couleur</button>
       <p id="result"></p>
     </div>
@@ -108,8 +114,15 @@
       }
 
       function newGame() {
+        document.getElementById("submit_button").style.display = "inline";
+        document.getElementById("guessColor").style.display = "none";
         targetColor = { r: randomRGB(), g: randomRGB(), b: randomRGB() };
-        document.body.style.backgroundColor = `rgb(${targetColor.r}, ${targetColor.g}, ${targetColor.b})`;
+        document.getElementById(
+          "targetColor"
+        ).style.backgroundColor = `rgb(${targetColor.r}, ${targetColor.g}, ${targetColor.b})`;
+
+        document.getElementById("guessColor").style.backgroundColor = "white";
+
         document.getElementById("result").textContent = "";
         document
           .querySelectorAll("input")
@@ -121,10 +134,17 @@
         const g = parseInt(document.getElementById("g").value) || 0;
         const b = parseInt(document.getElementById("b").value) || 0;
 
+        document.getElementById("submit_button").style.display = "none";
+        document.getElementById("guessColor").style.display = "block";
+        document.getElementById(
+          "guessColor"
+        ).style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+
         const error =
           Math.abs(r - targetColor.r) +
           Math.abs(g - targetColor.g) +
           Math.abs(b - targetColor.b);
+
         const score = Math.max(0, 100 - (error / 7.65).toFixed(2));
 
         document.getElementById(
@@ -134,24 +154,6 @@
         )}% \nLa réponse était : RGB(${targetColor.r}, ${targetColor.g}, ${
           targetColor.b
         })`;
-
-        if (score > 80) {
-          launchFireworks();
-        }
-      }
-
-      function launchFireworks() {
-        for (let i = 0; i < 20; i++) {
-          setTimeout(() => {
-            const firework = document.createElement("div");
-            firework.classList.add("firework");
-            document.body.appendChild(firework);
-            firework.style.left = `${Math.random() * 100}vw`;
-            firework.style.top = `${Math.random() * 100}vh`;
-            firework.style.backgroundColor = `rgb(${randomRGB()}, ${randomRGB()}, ${randomRGB()})`;
-            setTimeout(() => firework.remove(), 1000);
-          }, i * 100);
-        }
       }
 
       newGame();
