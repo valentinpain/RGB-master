@@ -1,0 +1,6 @@
+Valentin: 46.27
+Valentin: 60.65
+Valentin: 46.41
+test: 63.27
+test: 63.27
+test: 78.30
