@@ -2,12 +2,12 @@ const fs = require("fs");
 const path = require("path");
 
 export default function handler(req, res) {
-  const leaderboardFile = path.join(process.cwd(), "leaderboard.txt");
+  const leaderboardFile = path.join(process.cwd(), "/leaderboard.txt");
 
   if (req.method === "GET") {
     // Lire le leaderboard
     fs.readFile(leaderboardFile, "utf8", (err, data) => {
-      if (err) return res.status(500).json({ error: "Erreur de lecture" });
+      if (err) {console.log('wtf'); return res.status(500).json({ error: "Erreur de lecture" });}
       const scores = data
         .split("\n")
         .filter((line) => line.trim() !== "")
